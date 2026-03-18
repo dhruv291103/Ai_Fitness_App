@@ -1,0 +1,105 @@
+------SpringBoot Basic structure
+
+my-project
+│
+├── src
+│   └── main
+│       ├── java
+│       │    └── com.example.project
+│       │          ├── controller
+│       │          ├── service
+│       │          ├── repository
+│       │          ├── model
+│       │          └── ProjectApplication.java
+│
+│       └── resources
+│            ├── application.properties
+│            ├── static
+│            └── templates
+│
+└── pom.xml
+
+
+
+
+---------------------------------------------------------------
+
+
+
+Spring Boot ka actual flow:
+
+Client
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Repository
+   ↓
+Database
+
+
+
+
+Response:
+
+Database
+   ↑
+Repository
+   ↑
+Service
+   ↑
+Controller
+   ↑
+Client
+
+
+
+-------------------------------------------------------
+
+
+Ek Real Example
+
+User API banate hai.
+
+Controller
+@GetMapping("/user")
+public User getUser() {
+    return userService.getUser();
+}
+Service
+public User getUser() {
+    return userRepository.findById(1L).get();
+}
+Repository
+interface UserRepository extends JpaRepository<User,Long>
+🔟 3 Golden Rules (Senior Developers Use This)
+Rule 1
+
+Controller me logic nahi likhte
+
+❌ Wrong
+
+@RestController
+if(user.age>18)
+
+✔ Correct
+
+Controller → Service
+Rule 2
+
+Service me business logic
+
+Rule 3
+
+Repository me sirf database queries
+
+🚀 Ek Secret Bataun (Spring Boot Fast Learning)
+
+Spring Boot ko 3 cheezo me tod do:
+
+1️⃣ Controller → API
+2️⃣ Service → Logic
+3️⃣ Repository → Database
+
+Agar ye clear ho gaya to 80% Spring Boot samajh gaya.

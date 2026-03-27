@@ -7,6 +7,33 @@ spring:
       uri: mongodb://localhost:27017/airecommendationfitness
       database: airecommendationfitness
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: activity-processor-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      # key ko as a string , and value ko as a JSON object store krenge
+      properties:
+        spring.json.use.type.headers: false  # jo header type receive hoyega aiService ko wo ActivityService ka hoyega , just bcoz wo dusri service ka hai we will not use it so we set it as false
+        spring.json.value.default.type: com.fitness.aiservice.model.Activity     # jab bhi koi data aayega kafka ko wo aayega activity ka object , to wo isko map krdega
+        spring.json.trusted.packages: "*"
+
+#  eureka:
+#    client:
+#      serviceUrl:
+#        defaultZone: http://localhost:8761/eureka/
+
+gemini:
+  api:
+    url: ${GEMINI_URL}
+    KEY: ${GEMINI_KEY}
+
+kafka:
+  topic:
+    name: activity-events
+
+
 eureka:
     client:
       serviceUrl:

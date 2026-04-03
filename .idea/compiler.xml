@@ -12,7 +12,7 @@
         <module name="eureka" />
         <module name="configServer" />
       </profile>
-      <profile name="Annotation profile for userService" enabled="true">
+      <profile name="Annotation profile for aiservice" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

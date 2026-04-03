@@ -1,6 +1,8 @@
 package com.fitness.aiservice.service;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -8,14 +10,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class GeminiService {
     private final WebClient webClient;
 
     @Value("${gemini.api.url}")
     private String geminiApiUrl;
 
-    @Value("${gemini.api.url}")
+    @Value("${gemini.api.key}")
     private String geminiApiKey;
 
     public GeminiService(WebClient.Builder webClientBuilder){
@@ -24,22 +26,35 @@ public class GeminiService {
 
     public String getRecommendations(String details){
         Map<String, Object> requestBody = Map.of(
-                "Contents", new Object[]{
+                "contents", new Object[]{
                         Map.of("parts", new Object[] {
-                                Map.of("text", details)
+                                Map.of("text", details!= null ? details : "")
                         })
                 }
         );
 
-        String response = webClient.post()
-                .uri(geminiApiUrl)
-                .header("Content-Type", "application/json")
-                .header("X-goog-api-key", geminiApiKey)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        try{
+            String response = webClient.post()
+                    .uri(geminiApiUrl)
+                    .header("Content-Type", "application/json")
+                    .header("X-goog-api-key", geminiApiKey)
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .onStatus(
+                            status -> status.isError(),
+                            res -> res.bodyToMono(String.class)
+                                    .map(body -> new RuntimeException("Gemini Error: " + body))
+                    )
+                    .bodyToMono(String.class)
+                    .block();
 
-        return response;
+            log.info("API Response: {}", response);
 
+            return response;
+        } catch (Exception e){
+            log.info("API Failed: {}" , e.getMessage());
+        }
+
+        return null;
     }
 }
